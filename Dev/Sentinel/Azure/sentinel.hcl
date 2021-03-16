@@ -46,3 +46,9 @@ policy "storage-secure-transfer-required-is-enabled" {
 policy "storage-trusted-microsoft-services-is-enabled" {
     enforcement_level = "hard-mandatory"
 }
+policy "logging-ensure-log-profile-exists" {
+    enforcement_level = "hard-mandatory"
+}
+policy "logging-ensure-activity-log-retention-is-set-365-days-or-greater" {
+    enforcement_level = "hard-mandatory"
+}
