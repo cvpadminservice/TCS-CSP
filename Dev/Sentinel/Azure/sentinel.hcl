@@ -52,3 +52,15 @@ policy "logging-ensure-log-profile-exists" {
 policy "logging-ensure-activity-log-retention-is-set-365-days-or-greater" {
     enforcement_level = "hard-mandatory"
 }
+policy "key-vault-ensure-key-vault-is-recoverable" {
+    enforcement_level = "hard-mandatory"
+}
+policy "key-vault-ensure-expiration-date-is-set-on-all-keys" {
+    enforcement_level = "hard-mandatory"
+}
+policy "key-vault-ensure-expiration-date-is-set-on-all-secrets" {
+    enforcement_level = "hard-mandatory"
+}
+policy "kubernetes-enable-rbac-within-azure-kubernetes" {
+    enforcement_level = "hard-mandatory"
+}
