@@ -10,8 +10,7 @@ allProfile = filter tfplan.resource_changes as _, resource_changes {
 print("Ensure the key vault is recoverable")
 
 soft_delete_is_enabled = rule {
-    all allProfile as _, profiles {
-        profiles.change.after.soft_delete_enabled is true and
+    all allProfile as _, profiles {        
         profiles.change.after.purge_protection_enabled is true
     }
 }
