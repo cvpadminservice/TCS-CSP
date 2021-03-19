@@ -11,7 +11,8 @@ print("Ensure that the expiration date is set on all keys")
 
 expiration_date_exists = rule {
     all allProfile as _, profiles {
-        keys(profiles.change.after) contains "expiration_date"                
+        keys(profiles.change.after) contains "expiration_date" and
+        profiles.change.after.expiration_date is not null               
     }
 }
 
