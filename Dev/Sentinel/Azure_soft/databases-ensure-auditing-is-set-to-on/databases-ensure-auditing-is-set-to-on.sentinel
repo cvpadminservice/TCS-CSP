@@ -1,0 +1,21 @@
+import "tfplan/v2" as tfplan
+
+allMYSQLServers = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.mode is "managed" and
+		resource_changes.type is "azurerm_sql_server" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("Auditing is set to ON")
+
+auditing_is_on = rule {
+    all allMYSQLServers as _, servers {
+        keys(servers.change.after) contains "extended_auditing_policy" and
+        length(servers.change.after.extended_auditing_policy) != 0
+    }
+}
+
+main = rule {
+    auditing_is_on
+}
