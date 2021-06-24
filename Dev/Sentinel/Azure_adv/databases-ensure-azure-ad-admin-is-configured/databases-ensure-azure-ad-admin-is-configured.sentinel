@@ -1,0 +1,20 @@
+import "tfplan/v2" as tfplan
+
+allMYSQLServers = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.mode is "managed" and
+		resource_changes.type is "azurerm_sql_active_directory_administrator" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("Azure AD admin is configured")
+
+azure_ad_admin_is_configured = rule {
+    all allMYSQLServers as _, servers {
+       servers.change.after.login != null
+    }
+}
+
+main = rule {
+    azure_ad_admin_is_configured
+}

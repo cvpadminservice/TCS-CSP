@@ -1,0 +1,30 @@
+import "tfplan/v2" as tfplan
+
+allProfile = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.mode is "managed" and
+		resource_changes.type is "azurerm_kubernetes_cluster" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("Enable role-based access control (RBAC) within Azure Kubernetes Services")
+
+rbac_exists = rule {
+    all allProfile as _, profiles {
+        keys(profiles.change.after) contains "role_based_access_control" and
+        length(profiles.change.after.role_based_access_control) != 0
+    }
+}
+
+rbac_enabled_is_true = rule {
+    all allProfile as _, profiles {
+        all profiles.change.after.role_based_access_control as targetcode {
+            targetcode.enabled is true
+        }
+    }
+}
+
+main = rule {
+    rbac_exists and
+    rbac_enabled_is_true
+}

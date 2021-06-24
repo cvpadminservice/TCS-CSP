@@ -1,0 +1,29 @@
+import "tfplan/v2" as tfplan
+
+allMYSQLServers = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.mode is "managed" and
+		resource_changes.type is "azurerm_sql_server" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("Auditing Retention greater than 90 days")
+
+auditing_is_present = rule {
+    all allMYSQLServers as _, servers {
+        keys(servers.change.after) contains "extended_auditing_policy"
+    }
+}
+
+auditing_retention_greater_than_90 = rule {
+    all allMYSQLServers as _, servers {
+        all servers.change.after.extended_auditing_policy as target_code {
+            target_code.retention_in_days > 90
+        }        
+    }
+}
+
+main = rule {
+    auditing_is_present and
+	auditing_retention_greater_than_90
+}
